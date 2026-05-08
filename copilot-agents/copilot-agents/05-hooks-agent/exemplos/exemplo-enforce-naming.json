@@ -1,0 +1,44 @@
+{
+  "name": "enforce-naming-conventions",
+  "description": "Validates that generated code follows naming conventions: camelCase for vars, PascalCase for classes, UPPER_SNAKE_CASE for constants",
+  "version": "1.0.0",
+  "enabled": true,
+  "events": [
+    "preCodeGeneration",
+    "postCodeGeneration"
+  ],
+  "actions": [
+    {
+      "type": "validate",
+      "target": "code",
+      "rules": [
+        {
+          "rule": "variables-camelCase",
+          "pattern": "^(const|let|var)\\s+[a-z][a-zA-Z0-9]*\\s*=",
+          "message": "Variables must use camelCase (e.g., userName, not user_name or UserName)"
+        },
+        {
+          "rule": "classes-PascalCase",
+          "pattern": "^class\\s+[A-Z][a-zA-Z0-9]*\\s*[{({]",
+          "message": "Classes must use PascalCase (e.g., UserManager, not user_manager)"
+        },
+        {
+          "rule": "constants-UPPER_SNAKE_CASE",
+          "pattern": "^const\\s+[A-Z][A-Z0-9_]*\\s*=",
+          "message": "Constants must use UPPER_SNAKE_CASE (e.g., API_TIMEOUT, not apiTimeout)"
+        },
+        {
+          "rule": "files-kebab-case",
+          "pattern": "\\.(ts|tsx|js|jsx)$",
+          "message": "Files must use kebab-case (e.g., user-profile.ts, not userProfile.ts)"
+        }
+      ]
+    },
+    {
+      "type": "alert",
+      "severity": "warning",
+      "when": "naming-violation-detected",
+      "message": "Code violates naming conventions. Please review generated code before committing."
+    }
+  ]
+}

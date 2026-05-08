@@ -1,0 +1,47 @@
+{
+  "name": "enforce-testing-coverage",
+  "description": "Validates that code changes include corresponding tests and validates coverage requirements are met",
+  "version": "1.0.0",
+  "enabled": true,
+  "events": [
+    "postCodeGeneration",
+    "messageReceived"
+  ],
+  "actions": [
+    {
+      "type": "validate",
+      "target": "code",
+      "rules": [
+        {
+          "rule": "test-file-exists",
+          "message": "New code should have a corresponding test file (e.g., Feature.tsx -> Feature.test.tsx)"
+        },
+        {
+          "rule": "coverage-minimum-80",
+          "message": "Test coverage must be at least 80% for all new files"
+        },
+        {
+          "rule": "describe-blocks-present",
+          "pattern": "describe\\(",
+          "message": "Tests should use describe() blocks to group related tests"
+        },
+        {
+          "rule": "async-await-in-tests",
+          "pattern": "async\\s*\\(\\)|async\\s*\\w+\\s*\\(.*\\)",
+          "message": "Use async/await syntax for asynchronous tests instead of done() callbacks"
+        }
+      ]
+    },
+    {
+      "type": "alert",
+      "severity": "error",
+      "when": "coverage-below-80",
+      "message": "Coverage below 80%! Generated code must include tests. Use /testing prompt to create them."
+    },
+    {
+      "type": "block",
+      "when": "no-test-file-provided",
+      "message": "Code generation blocked: Test file required. Use /testing to create tests before committing."
+    }
+  ]
+}

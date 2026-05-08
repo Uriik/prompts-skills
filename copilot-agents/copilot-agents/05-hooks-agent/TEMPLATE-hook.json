@@ -1,0 +1,21 @@
+{
+  "name": "hook-name-here",
+  "description": "Clear description of what this hook enforces or does",
+  "version": "1.0.0",
+  "enabled": true,
+  "events": [
+    "sessionStart"
+  ],
+  "actions": [
+    {
+      "type": "validate",
+      "target": "code",
+      "rules": [
+        {
+          "rule": "rule-identifier",
+          "message": "Human-readable error message"
+        }
+      ]
+    }
+  ]
+}
