@@ -1,0 +1,42 @@
+# KS API (contrato OpenAPI) — API interna de Extrato
+# Tipo StackSpot: API · Split: ENDPOINT (cada endpoint vira um objeto pesquisável)
+openapi: 3.0.3
+info:
+  title: API Interna de Extrato
+  version: "1.0.0"
+  description: Consulta de lançamentos de conta corrente.
+paths:
+  /extrato/{conta}/lancamentos:
+    get:
+      summary: Lista lançamentos da conta
+      operationId: listarLancamentos
+      parameters:
+        - name: conta
+          in: path
+          required: true
+          schema: { type: string }
+        - name: limite
+          in: query
+          required: false
+          schema: { type: integer, default: 10 }
+      responses:
+        "200":
+          description: Lista de lançamentos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Lancamento"
+        "503":
+          description: Serviço indisponível
+components:
+  schemas:
+    Lancamento:
+      type: object
+      properties:
+        id: { type: string }
+        data: { type: string, format: date }
+        valor: { type: number }
+        tipo: { type: string, enum: [CREDITO, DEBITO] }
+        estornado: { type: boolean }

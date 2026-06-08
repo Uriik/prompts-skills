@@ -1,0 +1,9 @@
+# Credenciais individuais — nunca versionar
+techlead/setup/.env
+
+# Logs de execução do TechLead
+.github/.techlead/runs/
+
+# Python
+__pycache__/
+*.pyc

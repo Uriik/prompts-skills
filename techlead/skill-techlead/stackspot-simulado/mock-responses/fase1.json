@@ -1,0 +1,23 @@
+{
+  "resumo": "Consumir a API interna de Extrato para listar os 10 últimos lançamentos na tela de Conta Corrente (Angular), ocultando lançamentos estornados.",
+  "impactos": [
+    "Novo client de consumo da API de Extrato no backend Java",
+    "Nova regra de negócio: ocultar lançamentos estornados",
+    "Novo service e componente Angular para exibir os lançamentos",
+    "Necessário mascarar número da conta em logs"
+  ],
+  "modulos_afetados": [
+    "backend: modulo-conta-corrente",
+    "frontend: app-conta-corrente"
+  ],
+  "apis_envolvidas": [
+    "API interna de Extrato (GET /extrato/{conta}/lancamentos)"
+  ],
+  "riscos": [
+    {"risco": "Timeout/instabilidade da API de Extrato", "severidade": "media", "mitigacao": "Client resiliente com timeout, retry e circuit breaker (itau-rest-starter)"},
+    {"risco": "Vazamento de número de conta em log", "severidade": "alta", "mitigacao": "Mascarar conta (skill-mascaramento-dados)"},
+    {"risco": "Exibir estornado por engano", "severidade": "media", "mitigacao": "Regra isolada no service + teste de cenário"}
+  ],
+  "regras_arquitetura": ["ARQ-03", "ARQ-04", "ARQ-05", "ARQ-07", "ARQ-09"],
+  "dependencias": ["Credencial de acesso à API interna de Extrato"]
+}

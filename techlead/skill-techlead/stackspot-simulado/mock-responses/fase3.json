@@ -1,0 +1,120 @@
+{
+  "tasks": [
+    {
+      "id": "01",
+      "titulo": "Criar client resiliente de consumo da API de Extrato",
+      "objetivo": "Consumir GET /extrato/{conta}/lancamentos com resiliência e observabilidade.",
+      "depende_de": [],
+      "decisoes_tomadas": [
+        "Usar itau-rest-starter (NÃO criar cliente HTTP do zero) — RADAR-ADOTAR",
+        "Configurar timeout, retry e circuit breaker (skill-rest-client-resiliente)",
+        "Log estruturado com correlationId e máscara de conta (skill-observabilidade, skill-mascaramento-dados)"
+      ],
+      "passos": [
+        "Criar ExtratoClient usando itau-rest-starter apontando para a API de Extrato",
+        "Mapear a resposta para LancamentoDto (campos: id, data, valor, tipo, estornado)",
+        "Configurar timeout=2s, retry=2, circuit breaker conforme padrão do starter",
+        "Adicionar log estruturado com correlationId; mascarar o número da conta"
+      ],
+      "criterios_aceite": [
+        "ExtratoClient retorna lista de LancamentoDto a partir da API",
+        "Falha da API não propaga stacktrace cru; circuit breaker ativo",
+        "Número da conta aparece mascarado no log",
+        "Veracode: 0 findings High/Medium",
+        "Sonar: passa no quality gate",
+        "Lint Checkstyle sem erros"
+      ],
+      "arquivos_esperados": [
+        "modulo-conta-corrente/.../client/ExtratoClient.java",
+        "modulo-conta-corrente/.../dto/LancamentoDto.java"
+      ],
+      "regras": ["ARQ-03", "ARQ-04", "ARQ-05", "ARQ-09"],
+      "snippets": ["ks-snippets-java/rest-client.java"]
+    },
+    {
+      "id": "02",
+      "titulo": "Criar service com regra de ocultar lançamentos estornados",
+      "objetivo": "Aplicar a regra de negócio e expor os 10 últimos lançamentos válidos.",
+      "depende_de": ["01"],
+      "decisoes_tomadas": [
+        "Regra de negócio isolada no service (ARQ-02, GP-03)",
+        "Validação de entrada com Bean Validation (skill-validacao-borda)"
+      ],
+      "passos": [
+        "Criar ExtratoService que chama ExtratoClient",
+        "Filtrar lançamentos com estornado=true",
+        "Ordenar por data desc e limitar a 10",
+        "Validar a conta de entrada com Bean Validation",
+        "Cobrir com testes JUnit 5 + Mockito (cenários: com estornado, sem estornado, lista vazia)"
+      ],
+      "criterios_aceite": [
+        "Lançamentos estornados nunca retornam",
+        "Retorna no máximo 10, mais recentes primeiro",
+        "Conta inválida retorna erro de validação tratado",
+        "Cobertura de testes atende o quality gate do Sonar",
+        "Veracode: 0 findings High/Medium",
+        "Lint Checkstyle sem erros"
+      ],
+      "arquivos_esperados": [
+        "modulo-conta-corrente/.../service/ExtratoService.java",
+        "modulo-conta-corrente/.../service/ExtratoServiceTest.java"
+      ],
+      "regras": ["ARQ-02", "ARQ-10", "COD-02", "COD-03"],
+      "snippets": []
+    },
+    {
+      "id": "03",
+      "titulo": "Criar service Angular de consumo do extrato",
+      "objetivo": "Acessar o backend de extrato via service dedicado e tipado.",
+      "depende_de": ["02"],
+      "decisoes_tomadas": [
+        "Acesso a API só via service Angular (ARQ-07)",
+        "Headers internos via HttpInterceptor (ARQ-08) — RADAR-ADOTAR",
+        "Observable tipado com catchError (COD-06)"
+      ],
+      "passos": [
+        "Criar ExtratoService Angular com HttpClient",
+        "Definir interface Lancamento (id, data, valor, tipo)",
+        "Tratar erro com catchError retornando estado de erro amigável"
+      ],
+      "criterios_aceite": [
+        "Service retorna Observable<Lancamento[]> tipado",
+        "Erro de rede tratado sem quebrar a tela",
+        "Sem uso de any",
+        "Lint ESLint sem erros"
+      ],
+      "arquivos_esperados": [
+        "app-conta-corrente/.../extrato.service.ts"
+      ],
+      "regras": ["ARQ-07", "ARQ-08", "COD-05", "COD-06"],
+      "snippets": ["ks-snippets-angular/extrato.service.ts"]
+    },
+    {
+      "id": "04",
+      "titulo": "Criar componente Angular de lançamentos na Conta Corrente",
+      "objetivo": "Exibir os 10 últimos lançamentos válidos na tela de Conta Corrente.",
+      "depende_de": ["03"],
+      "decisoes_tomadas": [
+        "Componente standalone consumindo ExtratoService (GP-04)",
+        "Sem lógica de negócio no template (COD-07)"
+      ],
+      "passos": [
+        "Criar LancamentosComponent standalone",
+        "Injetar ExtratoService e carregar lançamentos no init",
+        "Renderizar lista com data, valor e tipo; estado de loading e erro"
+      ],
+      "criterios_aceite": [
+        "Tela exibe os lançamentos retornados pelo service",
+        "Estado de loading e de erro visíveis ao usuário",
+        "Sem lógica de negócio no template",
+        "Lint ESLint sem erros"
+      ],
+      "arquivos_esperados": [
+        "app-conta-corrente/.../lancamentos.component.ts",
+        "app-conta-corrente/.../lancamentos.component.html"
+      ],
+      "regras": ["ARQ-07", "COD-05", "COD-07"],
+      "snippets": []
+    }
+  ]
+}

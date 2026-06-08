@@ -1,0 +1,11 @@
+{
+  "decisoes": [
+    {"area": "Cliente HTTP (Java)", "escolha": "itau-rest-starter (Spring WebClient interno)", "fonte": "RADAR-ADOTAR", "motivo": "Resiliência (retry + circuit breaker) já incluída; proibido cliente do zero (ARQ-04)."},
+    {"area": "Validação (Java)", "escolha": "Bean Validation", "fonte": "RADAR-ADOTAR", "motivo": "Padrão do banco para validação de borda (ARQ-10)."},
+    {"area": "Testes (Java)", "escolha": "JUnit 5 + Mockito", "fonte": "RADAR-ADOTAR", "motivo": "Padrão de teste; exigido pelo quality gate (COD-03)."},
+    {"area": "HTTP (Angular)", "escolha": "HttpClient + HttpInterceptor interno", "fonte": "RADAR-ADOTAR", "motivo": "Headers internos via interceptor (ARQ-08)."}
+  ],
+  "padroes": ["GP-02", "GP-03", "GP-04"],
+  "skills": ["skill-rest-client-resiliente", "skill-observabilidade", "skill-mascaramento-dados", "skill-validacao-borda"],
+  "gates": ["Veracode: 0 findings High/Medium", "Sonar: passa no quality gate", "Lint: Checkstyle/ESLint sem erros"]
+}

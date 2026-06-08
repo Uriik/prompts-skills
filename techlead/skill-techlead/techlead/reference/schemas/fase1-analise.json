@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Fase 1 - Analise de Impacto",
+  "type": "object",
+  "required": ["resumo", "impactos", "modulos_afetados", "apis_envolvidas", "riscos", "regras_arquitetura"],
+  "properties": {
+    "resumo": { "type": "string" },
+    "impactos": { "type": "array", "items": { "type": "string" } },
+    "modulos_afetados": { "type": "array", "items": { "type": "string" } },
+    "apis_envolvidas": { "type": "array", "items": { "type": "string" } },
+    "riscos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["risco", "severidade", "mitigacao"],
+        "properties": {
+          "risco": { "type": "string" },
+          "severidade": { "type": "string", "enum": ["alta", "media", "baixa"] },
+          "mitigacao": { "type": "string" }
+        }
+      }
+    },
+    "regras_arquitetura": { "type": "array", "items": { "type": "string" } },
+    "dependencias": { "type": "array", "items": { "type": "string" } }
+  }
+}

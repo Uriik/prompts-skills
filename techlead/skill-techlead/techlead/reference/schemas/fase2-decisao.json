@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Fase 2 - Decisao de Tecnologia (Tech Advisor)",
+  "type": "object",
+  "required": ["decisoes", "padroes", "skills", "gates"],
+  "properties": {
+    "decisoes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["area", "escolha", "fonte", "motivo"],
+        "properties": {
+          "area": { "type": "string" },
+          "escolha": { "type": "string" },
+          "fonte": { "type": "string", "description": "RADAR-ADOTAR, ADR-xx, etc." },
+          "motivo": { "type": "string" }
+        }
+      }
+    },
+    "padroes": { "type": "array", "items": { "type": "string" }, "description": "IDs de golden-paths (GP-xx)" },
+    "skills": { "type": "array", "items": { "type": "string" }, "description": "IDs de skills do catalogo" },
+    "gates": { "type": "array", "items": { "type": "string" } }
+  }
+}
